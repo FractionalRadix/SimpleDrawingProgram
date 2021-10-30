@@ -20,7 +20,8 @@ class PaintingView : View {
 
     val tag = "SimpleDrawingProgram"
 
-    private var activeLineSegments = mutableMapOf<Int, LineSegment>()
+    //private var activeLineSegments = mutableMapOf<Int, LineSegment>()
+    private var activePointsLists = mutableMapOf<Int, PointsList>()
 
     var selectedColor = R.color.red
         set(value) { field = value }
@@ -59,17 +60,27 @@ class PaintingView : View {
         val contentWidth = width - paddingLeft - paddingRight
         val contentHeight = height - paddingTop - paddingBottom
 
-        activeLineSegments.forEach {
-            entry -> drawLineSegment(canvas, entry.component2())
+        //activeLineSegments.forEach {
+        activePointsLists.forEach {
+            //entry -> drawLineSegment(canvas, entry.component2())
+            entry -> drawPointsList(canvas, entry.value)
         }
 
         val owner = owningActivity()
         if (owner != null) {
+            val pointsListsIterator = owner.pointsListsIterator()
+            while (pointsListsIterator.hasNext()) {
+                val pointsList = pointsListsIterator.next()
+                drawPointsList(canvas, pointsList)
+            }
+
+            /*
             val lineSegmentIterator = owner.lineSegmentIterator()
             while (lineSegmentIterator.hasNext()) {
                 val segment = lineSegmentIterator.next()
                 drawLineSegment(canvas, segment)
             }
+            */
 
             val circleIterator = owner.circleIterator()
             while (circleIterator.hasNext()) {
@@ -79,6 +90,19 @@ class PaintingView : View {
 
             //owner.circleIterator().forEach { it -> drawCircle(canvas, it) }
 
+        }
+    }
+
+    private fun drawPointsList(canvas: Canvas, pointsList: PointsList) {
+        val paint = Paint()
+        paint.style = Paint.Style.FILL
+        paint.color = pointsList.color
+        paint.strokeWidth = 3f
+        //TODO?+ strokeMiter ?
+        //TODO?~ zipWithNext() might not be very performant here.
+        //  (Should we profile?)
+        pointsList.points.zipWithNext().forEach {
+            canvas.drawLine(it.first.x, it.first.y, it.second.x, it.second.y, paint)
         }
     }
 
@@ -111,82 +135,69 @@ class PaintingView : View {
             MotionEvent.ACTION_DOWN -> {
                 // A new pointer has started; there were no pointers before.
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_DOWN")
-                if (activeLineSegments.containsKey(pointer)) {
+                //if (activeLineSegments.containsKey(pointer)) {
+                if (activePointsLists.containsKey(pointer)) {
                     Log.e(tag, "A new pointer is created ($pointer), but there already is a shape using that pointer...")
                 }
-                activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
-                //activeLineSegments[pointer]?.points?.add(PointF(evt.x, evt.y))
+                //activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
+                activePointsLists[pointer] = PointsList(mutableListOf(), selectedColor)
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_POINTER_DOWN")
                 // A new pointer has started; there were other pointers already active.
-                if (activeLineSegments.containsKey(pointer)) {
+                //if (activeLineSegments.containsKey(pointer)) {
+                if (activePointsLists.containsKey(pointer)) {
                     Log.e(tag, "A new pointer is created ($pointer), but there already is a shape using that pointer...")
                 }
-                activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
+                //activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
+                activePointsLists[pointer] = PointsList(mutableListOf(), selectedColor)
             }
             MotionEvent.ACTION_UP -> {
                 // The primary pointer has gone up.
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_UP")
 
+                /*
                 val lineSegment = activeLineSegments[pointer]
                 if (lineSegment != null) {   // ... and it better be...
                     owningActivity()?.addLineSegmentToViewModel(lineSegment)
                     activeLineSegments.remove(pointer)
+                }
+                 */
+                val pointsList = activePointsLists[pointer]
+                if (pointsList != null) { // ... and it better be...
+                    owningActivity()?.addPointsListToViewModel(pointsList)
+                    activePointsLists.remove(pointer)
                 }
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 // A non-primary pointer has gone up.
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_POINTER_UP")
 
+                /*
                 val lineSegment = activeLineSegments[pointer]
                 if (lineSegment != null) {   // ... and it better be...
                     owningActivity()?.addLineSegmentToViewModel(lineSegment)
                     activeLineSegments.remove(pointer)
+                }
+                 */
+                val pointsList = activePointsLists[pointer]
+                if (pointsList != null) { // ... and it better be...
+                    owningActivity()?.addPointsListToViewModel(pointsList)
+                    activePointsLists.remove(pointer)
                 }
             }
         }
 
         for (pointerIdx in 0 until evt.pointerCount) {
             val pointerId = evt.getPointerId(pointerIdx)
-            if (activeLineSegments.containsKey(pointerId)) {
+            //if (activeLineSegments.containsKey(pointerId)) {
+            if (activePointsLists.containsKey(pointerId)) {
                 val x = evt.getX(pointerIdx)
                 val y = evt.getY(pointerIdx)
                 val p = PointF(x, y)
-                activeLineSegments[pointerId]?.points?.add(p)
+                //activeLineSegments[pointerId]?.points?.add(p)
+                activePointsLists[pointerId]?.add(p)
             }
-        }
-
-        invalidate()
-        return true
-    }
-
-    fun oldOnTouchEvent(evt: MotionEvent): Boolean {
-        //Log.i("SimpleDrawingProgram", "Entered onTouchEvent")
-
-        //TODO?~ Use the amount of pressure to determine line width?
-
-        val activePointers = activeLineSegments.keys
-        val pointersInEvent = (0 until evt.pointerCount).map { idx -> evt.getPointerId(idx) }
-        val activePointersNotInEvent = activePointers.filter { x -> x !in pointersInEvent }
-        for (pointer in activePointersNotInEvent) {
-            val lineSegment = activeLineSegments[pointer]
-            if (lineSegment != null) {
-                owningActivity()?.addLineSegmentToViewModel(lineSegment)
-                activeLineSegments.remove(pointer)
-            }
-        }
-
-        for (pointerIndex in 0 until evt.pointerCount) {
-            val cx = evt.getX(pointerIndex)
-            val cy = evt.getY(pointerIndex)
-            val pointer = evt.getPointerId(pointerIndex)
-
-            if (activeLineSegments[pointer] == null) {
-                activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
-            }
-
-            activeLineSegments[pointer]?.points?.add(PointF(cx, cy))
         }
 
         invalidate()

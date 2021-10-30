@@ -33,22 +33,24 @@ class MainActivity : AppCompatActivity() {
 
     fun square(x: Double) = x * x
 
-    fun addLineSegmentToViewModel(lineSegment: LineSegment) {
+    //fun addLineSegmentToViewModel(lineSegment: LineSegment) {
+    fun addPointsListToViewModel(pointsList: PointsList) {
         Log.i("SimpleDrawingProgram", "MainActivity.addLineSegmentToViewModel(...): adding line segment...")
 
         // First: add the line that the user ACTUALLY drew
-        viewModel.addLineSegment(lineSegment)
+        //viewModel.addLineSegment(pointsList)
+        viewModel.addPointsList(pointsList)
 
         val addIdealizedShape = false
         if (addIdealizedShape) {
             // Second (under development): an idealized version of the line that the use drew.
             //TODO?+ Guard against the situation where we have 0 points? Should not occur in practice...
-            val meanX = lineSegment.points.map { p -> p.x }.average()
-            val meanY = lineSegment.points.map { p -> p.y }.average()
+            val meanX = pointsList.points.map { p -> p.x }.average()
+            val meanY = pointsList.points.map { p -> p.y }.average()
 
 
             val squaredDistances =
-                lineSegment.points.map { p -> square(p.x - meanX) + square(p.y - meanY) }
+                pointsList.points.map { p -> square(p.x - meanX) + square(p.y - meanY) }
             val meanSquaredDistance = squaredDistances.average()
             //TODO!~ Make sure squaredDistances.size > 1. If squaredDistances.size <= 3 there's definitely not a circle here anyway...
             val varianceInSquaredDistances =
@@ -65,8 +67,8 @@ class MainActivity : AppCompatActivity() {
                 )
                 viewModel.addCircle(newCircle)
             } else {
-                val numerator = lineSegment.points.sumOf { p -> (p.x - meanX) * (p.y - meanY) }
-                val denominator = lineSegment.points.sumOf { p -> square(p.x - meanX) }
+                val numerator = pointsList.points.sumOf { p -> (p.x - meanX) * (p.y - meanY) }
+                val denominator = pointsList.points.sumOf { p -> square(p.x - meanX) }
                 //TODO?+ Guard against denominator == 0.0 ? Note that this can only happen if p.x == meanX all over the line.
                 val slope = numerator / denominator
                 val yIntercept = meanY - slope * meanX
@@ -77,19 +79,20 @@ class MainActivity : AppCompatActivity() {
                 // Also, what happens if the input is a perfect vertical line?
 
                 //TEMPORARY, for testing:
-                val startIdealizedLineSegment = lineSegment.points[0]
-                val endpoint = lineSegment.points.last()
+                val startIdealizedLineSegment = pointsList.points[0]
+                val endpoint = pointsList.points.last()
                 val endIdealizedLineSegment =
                     PointF(endpoint.x, (slope * endpoint.x + yIntercept).toFloat())
                 val idealizedLineSegment = LineSegment(
                     mutableListOf(startIdealizedLineSegment, endIdealizedLineSegment),
-                    lineSegment.color
+                    pointsList.color
                 )
                 viewModel.addLineSegment(idealizedLineSegment)
             }
         }
     }
 
+    fun pointsListsIterator(): Iterator<PointsList> = viewModel.pointsListsIterator()
     fun lineSegmentIterator(): Iterator<LineSegment> = viewModel.lineSegmentIterator()
     fun circleIterator(): Iterator<Circle> = viewModel.circleIterator()
 
