@@ -60,36 +60,15 @@ class PaintingView : View {
         val contentWidth = width - paddingLeft - paddingRight
         val contentHeight = height - paddingTop - paddingBottom
 
-        //activeLineSegments.forEach {
         activePointsLists.forEach {
-            //entry -> drawLineSegment(canvas, entry.component2())
             entry -> drawPointsList(canvas, entry.value)
         }
 
         val owner = owningActivity()
         if (owner != null) {
-            val pointsListsIterator = owner.pointsListsIterator()
-            while (pointsListsIterator.hasNext()) {
-                val pointsList = pointsListsIterator.next()
-                drawPointsList(canvas, pointsList)
-            }
-
-            /*
-            val lineSegmentIterator = owner.lineSegmentIterator()
-            while (lineSegmentIterator.hasNext()) {
-                val segment = lineSegmentIterator.next()
-                drawLineSegment(canvas, segment)
-            }
-            */
-
-            val circleIterator = owner.circleIterator()
-            while (circleIterator.hasNext()) {
-                val circle = circleIterator.next()
-                drawCircle(canvas, circle)
-            }
-
-            //owner.circleIterator().forEach { it -> drawCircle(canvas, it) }
-
+            owner.pointsListsIterator().forEach { drawPointsList(canvas, it) }
+            owner.lineSegmentIterator().forEach { drawLineSegment(canvas, it) }
+            owner.circleIterator().forEach { drawCircle(canvas, it) }
         }
     }
 
@@ -118,7 +97,7 @@ class PaintingView : View {
 
     private fun drawCircle(canvas: Canvas, circle: Circle) {
         val paint = Paint()
-        paint.style = Paint.Style.FILL
+        paint.style = Paint.Style.STROKE
         paint.color = circle.color
         paint.strokeWidth = 3f
 
@@ -126,40 +105,28 @@ class PaintingView : View {
     }
 
     override fun onTouchEvent(evt: MotionEvent): Boolean {
-        //Log.i(tag,"In onTouchEvent")
         val pointer = evt.getPointerId(evt.actionIndex)
         when (evt.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 // A new pointer has started; there were no pointers before.
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_DOWN")
-                //if (activeLineSegments.containsKey(pointer)) {
                 if (activePointsLists.containsKey(pointer)) {
                     Log.e(tag, "A new pointer is created ($pointer), but there already is a shape using that pointer...")
                 }
-                //activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
                 activePointsLists[pointer] = PointsList(mutableListOf(), selectedColor)
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_POINTER_DOWN")
                 // A new pointer has started; there were other pointers already active.
-                //if (activeLineSegments.containsKey(pointer)) {
                 if (activePointsLists.containsKey(pointer)) {
                     Log.e(tag, "A new pointer is created ($pointer), but there already is a shape using that pointer...")
                 }
-                //activeLineSegments[pointer] = LineSegment(mutableListOf(), selectedColor)
                 activePointsLists[pointer] = PointsList(mutableListOf(), selectedColor)
             }
             MotionEvent.ACTION_UP -> {
                 // The primary pointer has gone up.
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_UP")
 
-                /*
-                val lineSegment = activeLineSegments[pointer]
-                if (lineSegment != null) {   // ... and it better be...
-                    owningActivity()?.addLineSegmentToViewModel(lineSegment)
-                    activeLineSegments.remove(pointer)
-                }
-                 */
                 val pointsList = activePointsLists[pointer]
                 if (pointsList != null) { // ... and it better be...
                     owningActivity()?.addPointsListToViewModel(pointsList)
@@ -170,13 +137,6 @@ class PaintingView : View {
                 // A non-primary pointer has gone up.
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_POINTER_UP")
 
-                /*
-                val lineSegment = activeLineSegments[pointer]
-                if (lineSegment != null) {   // ... and it better be...
-                    owningActivity()?.addLineSegmentToViewModel(lineSegment)
-                    activeLineSegments.remove(pointer)
-                }
-                 */
                 val pointsList = activePointsLists[pointer]
                 if (pointsList != null) { // ... and it better be...
                     owningActivity()?.addPointsListToViewModel(pointsList)

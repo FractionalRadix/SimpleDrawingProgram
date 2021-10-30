@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 class MainActivity : AppCompatActivity() {
     private val viewModel: PaintingViewModel by viewModels()
     private lateinit var paintingView: PaintingView
+    private val tag = "SimpleDrawingProgram"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,38 +36,48 @@ class MainActivity : AppCompatActivity() {
 
     //fun addLineSegmentToViewModel(lineSegment: LineSegment) {
     fun addPointsListToViewModel(pointsList: PointsList) {
-        Log.i("SimpleDrawingProgram", "MainActivity.addLineSegmentToViewModel(...): adding line segment...")
+        Log.i(tag, "MainActivity.addLineSegmentToViewModel(...): adding line segment...")
 
-        // First: add the line that the user ACTUALLY drew
-        //viewModel.addLineSegment(pointsList)
-        viewModel.addPointsList(pointsList)
+        // The line that the user ACTUALLY drew. Only adding it later...
+        //viewModel.addPointsList(pointsList)
 
-        val addIdealizedShape = false
-        if (addIdealizedShape) {
-            // Second (under development): an idealized version of the line that the use drew.
+        val addIdealizedShape = true
+        if (!addIdealizedShape) {
+            viewModel.addPointsList(pointsList)
+        } else {
+            // Second (under development): an idealized version of the line or circle that the user drew.
             //TODO?+ Guard against the situation where we have 0 points? Should not occur in practice...
             val meanX = pointsList.points.map { p -> p.x }.average()
             val meanY = pointsList.points.map { p -> p.y }.average()
 
+            Log.i(tag, "mean x == $meanX, mean y == $meanY")
 
-            val squaredDistances =
-                pointsList.points.map { p -> square(p.x - meanX) + square(p.y - meanY) }
+            val squaredDistances    = pointsList.points.map { p -> square(p.x - meanX) + square(p.y - meanY) }
             val meanSquaredDistance = squaredDistances.average()
-            //TODO!~ Make sure squaredDistances.size > 1. If squaredDistances.size <= 3 there's definitely not a circle here anyway...
-            val varianceInSquaredDistances =
-                squaredDistances.sumOf { square(it - meanSquaredDistance) } / (squaredDistances.size - 1)
-            // If all squared distances are within 1 time standard deviation from the center, then let's assume it's a circle.
-            // ("1 time within SD" is an experimental value... may need 0.5 SD, or 2.0 SD...)
-            val isCircle = squaredDistances.all { it < Math.sqrt(varianceInSquaredDistances) }
-            if (false) {
-                //TODO?~ Is this correct? Or should the center and radius be calculated using a more complex formula?
+
+            // Determining if our points approximate a circle.
+            // (Standard deviation is not the way to go. Standard deviation in a straight line seems way smaller than in a circle...)
+            // Naive algorithm (to be replaced by a least squares approximation later):
+            // Take the circle with its center at (meanX, meanY), and radius equal to the average distance.
+            val distancesToCenter = pointsList.points.map { p -> Math.sqrt( square(p.x - meanX) + square(p.y - meanY )) }
+            val radius = distancesToCenter.average()
+            // Then determine, for each point, how far away it is from this perfect circle.
+            val differences = distancesToCenter.map { it / radius }
+            // If all points are within 80%-120% of the radius, we have us a circle.
+            // ... note that small straight lines might also satisfy this criterion!
+            // ....We need to find a way to determine if the points are spread AROUND our circle.
+            if (differences.all { it in 0.8 .. 1.2 }) {
                 val newCircle = Circle(
                     PointF(meanX.toFloat(), meanY.toFloat()),
                     Math.sqrt(meanSquaredDistance),
                     drawingColor
                 )
                 viewModel.addCircle(newCircle)
+
             } else {
+
+                //TODO!~ Add criteria for when the result simply ISN'T a straight line segment.
+
                 val numerator = pointsList.points.sumOf { p -> (p.x - meanX) * (p.y - meanY) }
                 val denominator = pointsList.points.sumOf { p -> square(p.x - meanX) }
                 //TODO?+ Guard against denominator == 0.0 ? Note that this can only happen if p.x == meanX all over the line.
@@ -81,14 +92,14 @@ class MainActivity : AppCompatActivity() {
                 //TEMPORARY, for testing:
                 val startIdealizedLineSegment = pointsList.points[0]
                 val endpoint = pointsList.points.last()
-                val endIdealizedLineSegment =
-                    PointF(endpoint.x, (slope * endpoint.x + yIntercept).toFloat())
-                val idealizedLineSegment = PointsList(
-                    mutableListOf(startIdealizedLineSegment, endIdealizedLineSegment),
-                    pointsList.color
-                )
-                //viewModel.addLineSegment(idealizedLineSegment)
-                viewModel.addPointsList(idealizedLineSegment)
+                //val endIdealizedLineSegment = PointF(endpoint.x, (slope * endpoint.x + yIntercept).toFloat())
+
+                val idealizedLineSegment = LineSegment(startIdealizedLineSegment, endpoint, pointsList.color)
+
+                viewModel.addLineSegment(idealizedLineSegment)
+
+                // AND the line that the user REALLY drew:
+                viewModel.addPointsList(pointsList)
             }
         }
     }
@@ -118,10 +129,10 @@ class MainActivity : AppCompatActivity() {
             // Apparently the View should NOT get information from the ViewModel.
             // The Activity should get information from the ViewModel, then pass it to the View.
             // (Source: https://sapandiwakar.in/accessing-viewmodel-inside-views-on-android-2/)
-            Log.i("SimpleDrawingProgram", "drawingColor==$drawingColor")
+            Log.i(tag, "drawingColor==$drawingColor")
             paintingView.selectedColor = drawingColor
-            Log.i("SimpleDrawingProgram", "Selected color in paintingView==${paintingView.selectedColor}")
+            Log.i(tag, "Selected color in paintingView==${paintingView.selectedColor}")
         }
-        Log.i("SimpleDrawingProgram", "Selected color = $drawingColor")
+        Log.i(tag, "Selected color = $drawingColor")
     }
 }
