@@ -83,11 +83,12 @@ class MainActivity : AppCompatActivity() {
                 val endpoint = pointsList.points.last()
                 val endIdealizedLineSegment =
                     PointF(endpoint.x, (slope * endpoint.x + yIntercept).toFloat())
-                val idealizedLineSegment = LineSegment(
+                val idealizedLineSegment = PointsList(
                     mutableListOf(startIdealizedLineSegment, endIdealizedLineSegment),
                     pointsList.color
                 )
-                viewModel.addLineSegment(idealizedLineSegment)
+                //viewModel.addLineSegment(idealizedLineSegment)
+                viewModel.addPointsList(idealizedLineSegment)
             }
         }
     }

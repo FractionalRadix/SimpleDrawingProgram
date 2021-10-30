@@ -111,11 +111,8 @@ class PaintingView : View {
         paint.style = Paint.Style.FILL
         paint.color = lineSegment.color
         paint.strokeWidth = 3f
-        //TODO?+ strokeMiter ?
-        //TODO?~ zipWithNext() might not be very performant here.
-        //  (Should we profile?)
-        lineSegment.points.zipWithNext().forEach {
-            canvas.drawLine(it.first.x, it.first.y, it.second.x, it.second.y, paint)
+        with (lineSegment) {
+            canvas.drawLine(p.x, p.y, q.x, q.y, paint)
         }
     }
 
