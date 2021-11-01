@@ -7,9 +7,17 @@ import java.util.*
 
 class Command {
     // Only ONE of these is allowed to have a value in each Command.
-    private var lineSegment: LineSegment? = null
-    private var circle: Circle? = null
-    private var pointsList: PointsList? = null
+    var lineSegment: LineSegment? = null
+    get() { return field }
+    private set(value) { field = value }
+
+    var circle: Circle? = null
+    get() { return field }
+    private set(value) { field = value }
+
+    var pointsList: PointsList? = null
+    get() { return field }
+    private set(value) { field = value }
 
     constructor(lineSegment: LineSegment) {
         this.lineSegment = lineSegment
@@ -33,21 +41,15 @@ class PaintingViewModel : ViewModel() {
     private val circles = mutableListOf<Circle>()
     private val pointsLists = mutableListOf<PointsList>()
 
-    fun pointsListsIterator(): Iterator<PointsList> = pointsLists.iterator()
-
     fun addPointsList(pointsList: PointsList) {
         pointsLists.add(pointsList)
         addNewCommand(Command(pointsList))
     }
 
-    fun lineSegmentIterator(): Iterator<LineSegment> = lineSegments.iterator()
-
     fun addLineSegment(newLineSegment: LineSegment) {
         lineSegments.add(newLineSegment)
         addNewCommand(Command(newLineSegment))
     }
-
-    fun circleIterator(): Iterator<Circle> = circles.iterator()
 
     fun addCircle(newCircle: Circle) {
         circles.add(newCircle)

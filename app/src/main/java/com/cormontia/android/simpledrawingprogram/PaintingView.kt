@@ -66,9 +66,17 @@ class PaintingView : View {
 
         val owner = owningActivity()
         if (owner != null) {
-            owner.pointsListsIterator().forEach { drawPointsList(canvas, it) }
-            owner.lineSegmentIterator().forEach { drawLineSegment(canvas, it) }
-            owner.circleIterator().forEach { drawCircle(canvas, it) }
+            owner.commandIterator().forEach { draw(canvas, it) }
+        }
+    }
+
+    private fun draw(canvas: Canvas, command: Command) {
+        if (command.pointsList != null) {
+            drawPointsList(canvas, command.pointsList!!)
+        } else if (command.lineSegment != null) {
+            drawLineSegment(canvas, command.lineSegment!!)
+        } else if (command.circle != null) {
+            drawCircle(canvas, command.circle!!)
         }
     }
 

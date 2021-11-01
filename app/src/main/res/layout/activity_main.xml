@@ -6,11 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageButton
+        android:id="@+id/undoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_undo_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/undo"
+        android:onClick="undo"
+        tools:layout_editor_absoluteX="2dp"
+        tools:layout_editor_absoluteY="4dp" />
+
+    <ImageButton
+        android:id="@+id/redoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_redo_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/undoButton"
+        android:contentDescription="@string/redo"
+        android:onClick="redo"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="1dp" />
+
     <com.cormontia.android.simpledrawingprogram.PaintingView
         android:id="@+id/paintingView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/undoButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -18,7 +42,7 @@
     <RadioGroup
         android:id="@+id/palette"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paintingView"
@@ -75,5 +99,7 @@
             android:onClick="colorSelected"
             />
     </RadioGroup>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

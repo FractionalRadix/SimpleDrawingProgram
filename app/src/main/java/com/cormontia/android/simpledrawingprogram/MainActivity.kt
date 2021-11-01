@@ -104,10 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun pointsListsIterator(): Iterator<PointsList> = viewModel.pointsListsIterator()
-    fun lineSegmentIterator(): Iterator<LineSegment> = viewModel.lineSegmentIterator()
-    fun circleIterator(): Iterator<Circle> = viewModel.circleIterator()
-
+    fun commandIterator(): Iterator<Command> = viewModel.commandIterator()
 
     //TODO!~ Set this in a ViewModel...
     //var drawingColor = viewModel.selectedColor
@@ -134,5 +131,17 @@ class MainActivity : AppCompatActivity() {
             Log.i(tag, "Selected color in paintingView==${paintingView.selectedColor}")
         }
         Log.i(tag, "Selected color = $drawingColor")
+    }
+
+    fun undo(view: android.view.View) {
+        Log.i(tag, "Entered undo(view).")
+        viewModel.undo()
+        //TODO!+ Force redraw
+    }
+
+    fun redo(view: android.view.View) {
+        Log.i(tag, "Entered redo(view).")
+        viewModel.redo()
+        //TODO!+ Force redraw
     }
 }

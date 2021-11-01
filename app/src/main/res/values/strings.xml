@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Simple Drawing Program</string>
+
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+
     <string name="red">Red</string>
     <string name="orange">Orange</string>
     <string name="yellow">Yellow</string>
@@ -7,4 +11,5 @@
     <string name="blue">Blue</string>
     <string name="indigo">Indigo</string>
     <string name="violet">Violet</string>
+
 </resources>
