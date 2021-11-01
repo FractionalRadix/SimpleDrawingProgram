@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 val newCircle = Circle(
                     PointF(meanX.toFloat(), meanY.toFloat()),
                     Math.sqrt(meanSquaredDistance),
-                    drawingColor
+                    pointsList.color //drawingColor
                 )
                 viewModel.addCircle(newCircle)
 
