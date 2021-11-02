@@ -1,36 +1,6 @@
 package com.cormontia.android.simpledrawingprogram
 
 import androidx.lifecycle.ViewModel
-import java.util.*
-
-//TODO!~ Working on an "Undo" functionality.
-
-class Command {
-    // Only ONE of these is allowed to have a value in each Command.
-    var lineSegment: LineSegment? = null
-    get() { return field }
-    private set(value) { field = value }
-
-    var circle: Circle? = null
-    get() { return field }
-    private set(value) { field = value }
-
-    var pointsList: PointsList? = null
-    get() { return field }
-    private set(value) { field = value }
-
-    constructor(lineSegment: LineSegment) {
-        this.lineSegment = lineSegment
-    }
-
-    constructor(circle: Circle) {
-        this.circle = circle
-    }
-
-    constructor(pointsList: PointsList) {
-        this.pointsList = pointsList
-    }
-}
 
 class PaintingViewModel : ViewModel() {
 
@@ -43,17 +13,17 @@ class PaintingViewModel : ViewModel() {
 
     fun addPointsList(pointsList: PointsList) {
         pointsLists.add(pointsList)
-        addNewCommand(Command(pointsList))
+        addNewCommand(DrawPointsListCommand(pointsList))
     }
 
     fun addLineSegment(newLineSegment: LineSegment) {
         lineSegments.add(newLineSegment)
-        addNewCommand(Command(newLineSegment))
+        addNewCommand(DrawLineSegmentCommand(newLineSegment))
     }
 
     fun addCircle(newCircle: Circle) {
         circles.add(newCircle)
-        addNewCommand(Command(newCircle))
+        addNewCommand(DrawCircleCommand(newCircle))
     }
 
     private fun addNewCommand(command: Command) {

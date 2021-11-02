@@ -71,16 +71,10 @@ class PaintingView : View {
     }
 
     private fun draw(canvas: Canvas, command: Command) {
-        if (command.pointsList != null) {
-            drawPointsList(canvas, command.pointsList!!)
-        } else if (command.lineSegment != null) {
-            drawLineSegment(canvas, command.lineSegment!!)
-        } else if (command.circle != null) {
-            drawCircle(canvas, command.circle!!)
-        }
+        command.execute(this, canvas)
     }
 
-    private fun drawPointsList(canvas: Canvas, pointsList: PointsList) {
+    fun drawPointsList(canvas: Canvas, pointsList: PointsList) {
         val paint = Paint()
         paint.style = Paint.Style.FILL
         paint.color = pointsList.color
@@ -93,7 +87,7 @@ class PaintingView : View {
         }
     }
 
-    private fun drawLineSegment(canvas: Canvas, lineSegment: LineSegment) {
+    fun drawLineSegment(canvas: Canvas, lineSegment: LineSegment) {
         val paint = Paint()
         paint.style = Paint.Style.FILL
         paint.color = lineSegment.color
@@ -103,7 +97,7 @@ class PaintingView : View {
         }
     }
 
-    private fun drawCircle(canvas: Canvas, circle: Circle) {
+    fun drawCircle(canvas: Canvas, circle: Circle) {
         val paint = Paint()
         paint.style = Paint.Style.STROKE
         paint.color = circle.color
