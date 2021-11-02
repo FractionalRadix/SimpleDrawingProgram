@@ -32,17 +32,19 @@ class MainActivity : AppCompatActivity() {
          */
     }
 
-    fun square(x: Double) = x * x
+    private fun square(x: Double) = x * x
 
-    //fun addLineSegmentToViewModel(lineSegment: LineSegment) {
-    fun addPointsListToViewModel(pointsList: PointsList) {
+    /**
+     * Add a list of points to the ViewModel, optionally replacing it with an "idealized" form.
+     * If idealization is on, then this method will check if the points list resembles a circle, a line segment, or other basic shape.
+     * It will then replace the points list with this "perfect" version of the shape the user drew.
+     * @param pointsList A list of points in the (X,Y) plane.
+     * @param idealize When `true`, replace the points list with an idealized shape.
+     */
+    fun addPointsListToViewModel(pointsList: PointsList, idealize: Boolean = true) {
         Log.i(tag, "MainActivity.addLineSegmentToViewModel(...): adding line segment...")
 
-        // The line that the user ACTUALLY drew. Only adding it later...
-        //viewModel.addPointsList(pointsList)
-
-        val addIdealizedShape = true
-        if (!addIdealizedShape) {
+        if (!idealize) {
             viewModel.addPointsList(pointsList)
         } else {
             // Second (under development): an idealized version of the line or circle that the user drew.
@@ -89,12 +91,28 @@ class MainActivity : AppCompatActivity() {
 
                 // Also, what happens if the input is a perfect vertical line?
 
-                //TEMPORARY, for testing:
-                val startIdealizedLineSegment = pointsList.points[0]
-                val endpoint = pointsList.points.last()
-                //val endIdealizedLineSegment = PointF(endpoint.x, (slope * endpoint.x + yIntercept).toFloat())
+                val x0 = with (pointsList.points[0].x) {
+                    if (this > meanX) {
+                        this - Math.sqrt(squaredDistances[0])
+                    } else {
+                        this + Math.sqrt(squaredDistances[0])
+                    }
+                }
+                val y0 = slope * x0 + yIntercept
+                val p0 = PointF(x0.toFloat(), y0.toFloat())
 
-                val idealizedLineSegment = LineSegment(startIdealizedLineSegment, endpoint, pointsList.color)
+                val n = pointsList.points.size - 1
+                val x1 = with (pointsList.points[n].x) {
+                    if (this > meanX) {
+                        this - Math.sqrt(squaredDistances[n])
+                    } else {
+                        this + Math.sqrt(squaredDistances[n])
+                    }
+                }
+                val y1 = slope * x1 + yIntercept
+                val p1 = PointF(x1.toFloat(), y1.toFloat())
+
+                val idealizedLineSegment = LineSegment(p0, p1, pointsList.color)
 
                 viewModel.addLineSegment(idealizedLineSegment)
 

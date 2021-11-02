@@ -11,7 +11,6 @@ import android.view.View
 
 class PaintingView : View {
 
-    //TODO!+ Add an Undo
     //TODO!+ Add an Eraser
     //TODO!+ Add a menu. It should contain (at least) the options "Save", "Load", and "New".
 
