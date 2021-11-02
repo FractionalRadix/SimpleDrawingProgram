@@ -24,7 +24,7 @@ class Command {
     }
 
     constructor(circle: Circle) {
-        this.circle = circle;
+        this.circle = circle
     }
 
     constructor(pointsList: PointsList) {
@@ -74,9 +74,7 @@ class PaintingViewModel : ViewModel() {
     }
 
     //TODO?~ For some reason, List.iterator returns a *mutable* Iterator... do we want that...?
-    //TODO?~ Should we get the iterator... or the iterator UNTIL the current commandIndex ?
-    //  We could use commands.take(commandIndex).iterator(), but "take" returns a list, not an Iterable. Need to check if it is "lazy".
-    fun commandIterator() = commands.iterator()
+    fun commandIterator() = commands.take(commandIndex).iterator()
 
     fun undo() {
         if (commandIndex > 0) {

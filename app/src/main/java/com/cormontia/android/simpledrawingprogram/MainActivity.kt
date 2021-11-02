@@ -134,14 +134,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun undo(view: android.view.View) {
-        Log.i(tag, "Entered undo(view).")
         viewModel.undo()
-        //TODO!+ Force redraw
+        val paintingView = findViewById<PaintingView>(R.id.paintingView)
+        paintingView.invalidate()
     }
 
     fun redo(view: android.view.View) {
-        Log.i(tag, "Entered redo(view).")
         viewModel.redo()
-        //TODO!+ Force redraw
+        val paintingView = findViewById<PaintingView>(R.id.paintingView)
+        paintingView.invalidate()
     }
 }
