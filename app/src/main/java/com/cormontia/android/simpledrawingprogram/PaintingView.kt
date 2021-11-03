@@ -12,7 +12,6 @@ import android.view.View
 class PaintingView : View {
 
     //TODO!+ Add an Eraser
-    //TODO!+ Add a menu. It should contain (at least) the options "Save", "Load", and "New".
 
     //TODO!+ Helper #1: if something looks like a straight line, or circle, make it a straight line or circle - instead of a list of points.
     //TODO!+ Helper #2: if something looks like a stick figure, make it a stick figure... and allow it to rotate! And to move its limbs.

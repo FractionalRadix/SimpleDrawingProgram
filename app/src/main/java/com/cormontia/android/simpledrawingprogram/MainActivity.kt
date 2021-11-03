@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.RadioButton
 import androidx.activity.viewModels
 
+//TODO!+ Add a menu. It should contain (at least) the options "Save", "Load", and "New".
+
 class MainActivity : AppCompatActivity() {
     private val viewModel: PaintingViewModel by viewModels()
     private lateinit var paintingView: PaintingView
@@ -78,6 +80,8 @@ class MainActivity : AppCompatActivity() {
 
             } else {
 
+                /*
+                //TODO!+ Find the starting point and ending point of an idealized line segment.
                 //TODO!~ Add criteria for when the result simply ISN'T a straight line segment.
 
                 val numerator = pointsList.points.sumOf { p -> (p.x - meanX) * (p.y - meanY) }
@@ -91,7 +95,8 @@ class MainActivity : AppCompatActivity() {
 
                 // Also, what happens if the input is a perfect vertical line?
 
-                val x0 = with (pointsList.points[0].x) {
+                val x0 =
+                    with (pointsList.points[0].x) {
                     if (this > meanX) {
                         this - Math.sqrt(squaredDistances[0])
                     } else {
@@ -99,6 +104,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 val y0 = slope * x0 + yIntercept
+
                 val p0 = PointF(x0.toFloat(), y0.toFloat())
 
                 val n = pointsList.points.size - 1
@@ -116,6 +122,7 @@ class MainActivity : AppCompatActivity() {
 
                 viewModel.addLineSegment(idealizedLineSegment)
 
+                 */
                 // AND the line that the user REALLY drew:
                 viewModel.addPointsList(pointsList)
             }
@@ -149,6 +156,18 @@ class MainActivity : AppCompatActivity() {
             Log.i(tag, "Selected color in paintingView==${paintingView.selectedColor}")
         }
         Log.i(tag, "Selected color = $drawingColor")
+    }
+
+    fun clear(view: android.view.View) {
+        //TODO!+
+    }
+
+    fun load(view: android.view.View) {
+        //TODO!+
+    }
+
+    fun save(view: android.view.View) {
+        //TODO!+
     }
 
     fun undo(view: android.view.View) {

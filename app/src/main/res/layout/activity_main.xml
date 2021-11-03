@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,36 +8,73 @@
     tools:context=".MainActivity">
 
     <ImageButton
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_open_in_new_24"
+        android:contentDescription="@string/clear"
+        android:onClick="clear"
+        tools:ignore="MissingConstraints"
+        />
+
+    <ImageButton
+        android:id="@+id/loadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/load"
+        android:onClick="load"
+        app:layout_constraintBottom_toTopOf="@+id/paintingView"
+        app:srcCompat="@drawable/ic_baseline_file_open_24"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="106dp" />
+
+    <ImageButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_save_24"
+        android:contentDescription="@string/save"
+        android:onClick="save"
+        tools:ignore="MissingConstraints"
+        />
+
+    <ImageButton
         android:id="@+id/undoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_baseline_undo_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:contentDescription="@string/undo"
         android:onClick="undo"
-        tools:layout_editor_absoluteX="2dp"
-        tools:layout_editor_absoluteY="4dp" />
+        tools:ignore="MissingConstraints"
+        />
 
     <ImageButton
         android:id="@+id/redoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_baseline_redo_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/undoButton"
         android:contentDescription="@string/redo"
         android:onClick="redo"
-        tools:layout_editor_absoluteX="50dp"
-        tools:layout_editor_absoluteY="1dp" />
+        tools:ignore="MissingConstraints"
+        />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/top_menu"
+        android:orientation="horizontal"
+        app:flow_firstHorizontalStyle="packed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:constraint_referenced_ids="clearButton,loadButton,saveButton,undoButton,redoButton"/>
 
     <com.cormontia.android.simpledrawingprogram.PaintingView
         android:id="@+id/paintingView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/undoButton"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="450dp"
+        app:layout_constraintTop_toBottomOf="@id/top_menu"
+        app:layout_constraintBottom_toTopOf="@id/palette"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         />
 
     <RadioGroup
@@ -44,7 +82,6 @@
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paintingView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +136,5 @@
             android:onClick="colorSelected"
             />
     </RadioGroup>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

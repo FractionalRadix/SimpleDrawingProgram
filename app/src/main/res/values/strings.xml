@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Simple Drawing Program</string>
 
+    <string name="clear">Clear</string>
+    <string name="load">Load</string>
+    <string name="save">Save</string>
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
 
