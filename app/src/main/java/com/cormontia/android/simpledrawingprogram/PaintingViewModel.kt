@@ -1,8 +1,11 @@
 package com.cormontia.android.simpledrawingprogram
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 
 class PaintingViewModel : ViewModel() {
+
+    private val tag = "SimpleDrawingProgram"
 
     private val commands = mutableListOf<Command>()
     private var commandIndex = 0
@@ -27,23 +30,14 @@ class PaintingViewModel : ViewModel() {
     }
 
     private fun addNewCommand(command: Command) {
-        // Suppose "commands" has 5 elements, numbered 0,1,2,3,4.
-        // Suppose "commandIndex" is currently 2.
-        // Then upon executing a new command:
-        //  - Elements 3, 4, and 5 must be dropped.
-        //  - The new command must be added.
-        //  - The commandIndex must be increased by 1.
-
-        val discard = commands.size - commandIndex
-        if (discard > 0) {
-            commands.dropLast(discard)
+        while (commands.size > commandIndex) {
+            commands.removeLast()
         }
         commands.add(command)
         commandIndex++
-
     }
 
-    //TODO?~ For some reason, List.iterator returns a *mutable* Iterator... do we want that...?
+    //TODO?~ List.iterator returns a *mutable* Iterator... do we want that...?
     fun commandIterator() = commands.take(commandIndex).iterator()
 
     fun undo() {
@@ -53,9 +47,8 @@ class PaintingViewModel : ViewModel() {
     }
 
     fun redo() {
-        if (commandIndex < commands.size - 1) {
+        if (commandIndex < commands.size) {
             commandIndex++
         }
     }
-
 }
