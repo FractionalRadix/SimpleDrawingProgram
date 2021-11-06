@@ -1,11 +1,8 @@
 package com.cormontia.android.simpledrawingprogram
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 
 class PaintingViewModel : ViewModel() {
-
-    private val tag = "SimpleDrawingProgram"
 
     private val commands = mutableListOf<Command>()
     private var commandIndex = 0
