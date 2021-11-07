@@ -6,17 +6,17 @@ interface Command {
     fun execute(view: PaintingView, canvas: Canvas)
 }
 
-class DrawLineSegmentCommand(val lineSegment: LineSegment) : Command {
+class DrawLineSegmentCommand(val lineSegment: LineSegment, val color: Int) : Command {
     override fun execute(view: PaintingView, canvas: Canvas) =
-        view.drawLineSegment(canvas, lineSegment)
+        view.drawLineSegment(canvas, lineSegment, color)
 }
 
-class DrawCircleCommand(val circle: Circle) : Command {
+class DrawCircleCommand(val circle: Circle, val color: Int) : Command {
     override fun execute(view: PaintingView, canvas: Canvas) =
-        view.drawCircle(canvas, circle)
+        view.drawCircle(canvas, circle, color)
 }
 
-class DrawPointsListCommand(val pointsList: PointsList) : Command {
+class DrawPointsListCommand(val pointsList: PointsList, val color: Int) : Command {
     override fun execute(view: PaintingView, canvas: Canvas) =
-        view.drawPointsList(canvas, pointsList)
+        view.drawPointsList(canvas, pointsList, color)
 }

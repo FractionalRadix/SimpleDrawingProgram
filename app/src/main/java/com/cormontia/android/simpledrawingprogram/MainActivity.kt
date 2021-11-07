@@ -65,9 +65,9 @@ class MainActivity : AppCompatActivity() {
             val newCircle = Circle(
                 PointF(meanX.toFloat(), meanY.toFloat()),
                 sqrt(meanSquaredDistance),
-                pointsList.color //drawingColor
+                //pointsList.color //drawingColor
             )
-            viewModel.addCircle(newCircle)
+            viewModel.addCircle(newCircle, drawingColor)
             return true
         }
         return false
@@ -87,8 +87,8 @@ class MainActivity : AppCompatActivity() {
         val p0 = pointsList.points[0]
         val p1 = pointsList.points.last()
 
-        var q0: PointF
-        var q1: PointF
+        val q0: PointF
+        val q1: PointF
 
         // Assume that the points should form a straight line segment.
         // A line segment is part of a line; we determine the line using least squares approximation.
@@ -107,8 +107,8 @@ class MainActivity : AppCompatActivity() {
         if (numerator == 0.0 || denominator == 0.0) {
             q0 = PointF(p0.x, p0.y)
             q1 = PointF(p1.x, p1.y)
-            val idealizedLineSegment = LineSegment(q0, q1, pointsList.color)
-            viewModel.addLineSegment(idealizedLineSegment)
+            val idealizedLineSegment = LineSegment(q0, q1)
+            viewModel.addLineSegment(idealizedLineSegment, drawingColor)
             return true
         } else {
             val slope = numerator / denominator
@@ -145,8 +145,8 @@ class MainActivity : AppCompatActivity() {
                 val q1y = (1 / slope) * p1.x + p1.y - p1.x / slope
                 q1 = PointF(q1x.toFloat(), q1y.toFloat())
 
-                val idealizedLineSegment = LineSegment(q0, q1, pointsList.color)
-                viewModel.addLineSegment(idealizedLineSegment)
+                val idealizedLineSegment = LineSegment(q0, q1)
+                viewModel.addLineSegment(idealizedLineSegment, drawingColor)
                 return true
             }
 
@@ -168,15 +168,16 @@ class MainActivity : AppCompatActivity() {
 
         //TODO?+ Guard against the situation where we have 0 points? Should not occur in practice...
 
+        //TODO?~ Let the "drawIf" functions return a nullable Shape? This better separates calculation and drawing.
         if (!idealize) {
-            viewModel.addPointsList(pointsList)
+            viewModel.addPointsList(pointsList, drawingColor)
         } else if (drawIfCircle(pointsList)) {
             return
         } else if (drawIfStraightLine(pointsList)) {
             return
         } else {
             // If it's neither a circle nor a line, let's draw the points that the user REALLY drew:
-            viewModel.addPointsList(pointsList)
+            viewModel.addPointsList(pointsList, drawingColor)
         }
     }
 
@@ -185,7 +186,7 @@ class MainActivity : AppCompatActivity() {
 
     //TODO!~ Set this in a ViewModel...
     //var drawingColor = viewModel.selectedColor
-    var drawingColor = Color.RED
+    private var drawingColor = Color.RED
 
     fun colorSelected(view: android.view.View) {
         if (view is RadioButton) {

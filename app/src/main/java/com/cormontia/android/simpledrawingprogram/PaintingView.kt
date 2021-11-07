@@ -59,7 +59,7 @@ class PaintingView : View {
         val contentHeight = height - paddingTop - paddingBottom
 
         activePointsLists.forEach {
-            entry -> drawPointsList(canvas, entry.value)
+            entry -> drawPointsList(canvas, entry.value, selectedColor)
         }
 
         val owner = owningActivity()
@@ -72,10 +72,11 @@ class PaintingView : View {
         command.execute(this, canvas)
     }
 
-    fun drawPointsList(canvas: Canvas, pointsList: PointsList) {
+    fun drawPointsList(canvas: Canvas, pointsList: PointsList, color: Int) {
         val paint = Paint()
         paint.style = Paint.Style.FILL
-        paint.color = pointsList.color
+        //paint.color = pointsList.color
+        paint.color = color
         paint.strokeWidth = 3f
         //TODO?+ strokeMiter ?
         //TODO?~ zipWithNext() might not be very performant here.
@@ -85,20 +86,22 @@ class PaintingView : View {
         }
     }
 
-    fun drawLineSegment(canvas: Canvas, lineSegment: LineSegment) {
+    fun drawLineSegment(canvas: Canvas, lineSegment: LineSegment, color: Int) {
         val paint = Paint()
         paint.style = Paint.Style.FILL
-        paint.color = lineSegment.color
+        //paint.color = lineSegment.color
+        paint.color = color
         paint.strokeWidth = 3f
         with (lineSegment) {
             canvas.drawLine(p.x, p.y, q.x, q.y, paint)
         }
     }
 
-    fun drawCircle(canvas: Canvas, circle: Circle) {
+    fun drawCircle(canvas: Canvas, circle: Circle, color: Int) {
         val paint = Paint()
         paint.style = Paint.Style.STROKE
-        paint.color = circle.color
+        //paint.color = circle.color
+        paint.color = color
         paint.strokeWidth = 3f
 
         canvas.drawCircle(circle.center.x, circle.center.y, circle.radius.toFloat(), paint)
@@ -113,7 +116,7 @@ class PaintingView : View {
                 if (activePointsLists.containsKey(pointer)) {
                     Log.e(tag, "A new pointer is created ($pointer), but there already is a shape using that pointer...")
                 }
-                activePointsLists[pointer] = PointsList(mutableListOf(), selectedColor)
+                activePointsLists[pointer] = PointsList(mutableListOf())
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
                 Log.i(tag, "evt.actionMasked == MotionEvent.ACTION_POINTER_DOWN")
@@ -121,7 +124,7 @@ class PaintingView : View {
                 if (activePointsLists.containsKey(pointer)) {
                     Log.e(tag, "A new pointer is created ($pointer), but there already is a shape using that pointer...")
                 }
-                activePointsLists[pointer] = PointsList(mutableListOf(), selectedColor)
+                activePointsLists[pointer] = PointsList(mutableListOf())
             }
             MotionEvent.ACTION_UP -> {
                 // The primary pointer has gone up.

@@ -2,9 +2,9 @@ package com.cormontia.android.simpledrawingprogram
 
 import android.graphics.PointF
 
-data class Circle(val center: PointF, val radius: Double, val color:Int)
+data class Circle(val center: PointF, val radius: Double)
 
-class PointsList(val points:MutableList<PointF>, val color:Int) {
+class PointsList(val points:MutableList<PointF>) {
     fun add(p: PointF) {
         if (points.isEmpty()) {
             points.add(p)
@@ -15,4 +15,4 @@ class PointsList(val points:MutableList<PointF>, val color:Int) {
     }
 }
 
-data class LineSegment(val p: PointF, val q: PointF, val color:Int)
+data class LineSegment(val p: PointF, val q: PointF)

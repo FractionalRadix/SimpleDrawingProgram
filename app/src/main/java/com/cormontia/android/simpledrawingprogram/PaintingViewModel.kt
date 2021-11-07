@@ -11,19 +11,19 @@ class PaintingViewModel : ViewModel() {
     private val circles = mutableListOf<Circle>()
     private val pointsLists = mutableListOf<PointsList>()
 
-    fun addPointsList(pointsList: PointsList) {
+    fun addPointsList(pointsList: PointsList, color:Int) {
         pointsLists.add(pointsList)
-        addNewCommand(DrawPointsListCommand(pointsList))
+        addNewCommand(DrawPointsListCommand(pointsList, color))
     }
 
-    fun addLineSegment(newLineSegment: LineSegment) {
+    fun addLineSegment(newLineSegment: LineSegment, color: Int) {
         lineSegments.add(newLineSegment)
-        addNewCommand(DrawLineSegmentCommand(newLineSegment))
+        addNewCommand(DrawLineSegmentCommand(newLineSegment, color))
     }
 
-    fun addCircle(newCircle: Circle) {
+    fun addCircle(newCircle: Circle, color: Int) {
         circles.add(newCircle)
-        addNewCommand(DrawCircleCommand(newCircle))
+        addNewCommand(DrawCircleCommand(newCircle, color))
     }
 
     private fun addNewCommand(command: Command) {
