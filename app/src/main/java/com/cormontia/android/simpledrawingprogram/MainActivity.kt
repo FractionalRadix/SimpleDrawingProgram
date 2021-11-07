@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Given a set of points, check if they roughly form a circle.
-     * If yes, draw the circle; if no, return <code>false</code>.
+     * If yes, return the circle; if no, return <code>null</code>.
      * @param pointsList A list of 2D points.
-     * @return <code>true</code> if and only if a circle was drawn.
+     * @return The circle approximated by the points, or <code>null</code> if the points do not approximate a circle.
      */
-    private fun drawIfCircle(pointsList: PointsList) : Boolean {
+    private fun drawIfCircle(pointsList: PointsList) : Circle? {
         val meanX = pointsList.points.map { p -> p.x }.average()
         val meanY = pointsList.points.map { p -> p.y }.average()
 
@@ -65,21 +65,19 @@ class MainActivity : AppCompatActivity() {
             val newCircle = Circle(
                 PointF(meanX.toFloat(), meanY.toFloat()),
                 sqrt(meanSquaredDistance),
-                //pointsList.color //drawingColor
             )
-            viewModel.addCircle(newCircle, drawingColor)
-            return true
+            return newCircle
         }
-        return false
+        return null
     }
 
     /**
      * Given a set of points, check if they approximate a segment of a straight line.
-     * If yes, draw the line; if no, return <code>false</code>.
+     * If yes, return the line segment; if no, return <code>null</code>.
      * @param pointsList A list of 2D points.
-     * @return <code>true</code> if and only if a line segment was drawn.
+     * @return The line segment approximated by the points, or <code>null</code> if the points do not approximate a line segment.
      */
-    private fun drawIfStraightLine(pointsList: PointsList) : Boolean {
+    private fun drawIfStraightLine(pointsList: PointsList) : LineSegment? {
         val meanX = pointsList.points.map { p -> p.x }.average()
         val meanY = pointsList.points.map { p -> p.y }.average()
 
@@ -107,9 +105,7 @@ class MainActivity : AppCompatActivity() {
         if (numerator == 0.0 || denominator == 0.0) {
             q0 = PointF(p0.x, p0.y)
             q1 = PointF(p1.x, p1.y)
-            val idealizedLineSegment = LineSegment(q0, q1)
-            viewModel.addLineSegment(idealizedLineSegment, drawingColor)
-            return true
+            return LineSegment(q0, q1)
         } else {
             val slope = numerator / denominator
             val yIntercept = meanY - slope * meanX
@@ -145,13 +141,11 @@ class MainActivity : AppCompatActivity() {
                 val q1y = (1 / slope) * p1.x + p1.y - p1.x / slope
                 q1 = PointF(q1x.toFloat(), q1y.toFloat())
 
-                val idealizedLineSegment = LineSegment(q0, q1)
-                viewModel.addLineSegment(idealizedLineSegment, drawingColor)
-                return true
+                return LineSegment(q0, q1)
             }
 
         }
-        return false
+        return null
     }
 
     //TODO!~ Move the maths functions to a separate class.
@@ -168,14 +162,23 @@ class MainActivity : AppCompatActivity() {
 
         //TODO?+ Guard against the situation where we have 0 points? Should not occur in practice...
 
-        //TODO?~ Let the "drawIf" functions return a nullable Shape? This better separates calculation and drawing.
         if (!idealize) {
             viewModel.addPointsList(pointsList, drawingColor)
-        } else if (drawIfCircle(pointsList)) {
-            return
-        } else if (drawIfStraightLine(pointsList)) {
-            return
         } else {
+            // Is it a circle? If so, draw the circle.
+            val newCircle = drawIfCircle(pointsList)
+            if (newCircle != null) {
+                viewModel.addCircle(newCircle, drawingColor)
+                return
+            }
+
+            // Is it a line segment? If so, draw the line segment.
+            val newLineSegment = drawIfStraightLine(pointsList)
+            if (newLineSegment != null) {
+                viewModel.addLineSegment(newLineSegment, drawingColor)
+                return
+            }
+
             // If it's neither a circle nor a line, let's draw the points that the user REALLY drew:
             viewModel.addPointsList(pointsList, drawingColor)
         }
