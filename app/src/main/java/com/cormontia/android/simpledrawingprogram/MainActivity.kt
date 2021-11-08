@@ -1,13 +1,11 @@
 package com.cormontia.android.simpledrawingprogram
 
 import android.graphics.Color
-import android.graphics.PointF
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.RadioButton
 import androidx.activity.viewModels
-import kotlin.math.sqrt
 
 //TODO!+ Add a menu. It should contain (at least) the options "Save", "Load", and "New".
 
@@ -103,11 +101,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun load(view: android.view.View) {
-        //TODO!+
+        //TODO!~
+        this.openFileInput("drawing.svg").use {
+            //TODO!+
+        }
     }
 
     fun save(view: android.view.View) {
-        //TODO!+
+        //TODO!+ Allow the user to specify a filename
+        //TODO?~ "MODE_PRIVATE" means only this app can read it. Consider MODE_WORLD_READABLE...
+
+
+        this.openFileOutput("drawing.svg", MODE_PRIVATE).use {
+            val fileOutputStream = it
+            commandIterator().forEach {
+                if (it is DrawingCommand) {
+                    val generatedSvg = it.shape().svg(it.color()) + "\n\r"
+                    //TODO!+ fileOutputStream.write(generatedSvg.toByteArray())
+                    Log.i(tag, generatedSvg)
+                }
+            }
+        }
+
     }
 
     fun undo(view: android.view.View) {
