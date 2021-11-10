@@ -48,4 +48,8 @@ class PaintingViewModel : ViewModel() {
             commandIndex++
         }
     }
+
+    fun clear() {
+        commands.clear()
+    }
 }

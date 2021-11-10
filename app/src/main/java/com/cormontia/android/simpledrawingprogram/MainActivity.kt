@@ -97,7 +97,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun clear(view: android.view.View) {
-        //TODO!+
+        //TODO!+ Ask user for confirmation.
+        viewModel.clear()
+        paintingView.clear()
     }
 
     fun load(view: android.view.View) {

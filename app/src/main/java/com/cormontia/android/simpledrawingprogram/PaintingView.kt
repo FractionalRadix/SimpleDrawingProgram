@@ -163,4 +163,9 @@ class PaintingView : View {
         invalidate()
         return true
     }
+
+    internal fun clear() {
+        activePointsLists.clear()
+        invalidate()
+    }
 }
