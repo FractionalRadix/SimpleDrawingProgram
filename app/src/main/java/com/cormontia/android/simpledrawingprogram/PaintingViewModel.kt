@@ -1,11 +1,14 @@
 package com.cormontia.android.simpledrawingprogram
 
+import android.graphics.Color
 import androidx.lifecycle.ViewModel
 
 class PaintingViewModel : ViewModel() {
 
     private val commands = mutableListOf<Command>()
     private var commandIndex = 0
+
+    var drawingColor: Int = Color.RED
 
     private val lineSegments = mutableListOf<LineSegment>()
     private val circles = mutableListOf<Circle>()

@@ -2,6 +2,7 @@ package com.cormontia.android.simpledrawingprogram
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
@@ -21,8 +22,8 @@ class PaintingView : View {
     //private var activeLineSegments = mutableMapOf<Int, LineSegment>()
     private var activePointsLists = mutableMapOf<Int, PointsList>()
 
-    var selectedColor = R.color.red
-        set(value) { field = value }
+    //TODO?~ Should be initialized from the ViewModel, not here. See if we can remove the entire thing here.
+    var selectedColor = Color.GREEN
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs, 0)
@@ -58,14 +59,11 @@ class PaintingView : View {
         val contentWidth = width - paddingLeft - paddingRight
         val contentHeight = height - paddingTop - paddingBottom
 
-        activePointsLists.forEach {
-            entry -> drawPointsList(canvas, entry.value, selectedColor)
+        activePointsLists.forEach { entry ->
+            drawPointsList(canvas, entry.value, selectedColor)
         }
 
-        val owner = owningActivity()
-        if (owner != null) {
-            owner.commandIterator().forEach { draw(canvas, it) }
-        }
+        owningActivity()?.commandIterator()?.forEach { draw(canvas, it) }
     }
 
     private fun draw(canvas: Canvas, command: Command) {

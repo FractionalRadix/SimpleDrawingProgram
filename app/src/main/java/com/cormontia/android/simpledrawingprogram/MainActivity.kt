@@ -7,8 +7,6 @@ import android.util.Log
 import android.widget.RadioButton
 import androidx.activity.viewModels
 
-//TODO!+ Add a menu. It should contain (at least) the options "Save", "Load", and "New".
-
 class MainActivity : AppCompatActivity() {
     private val viewModel: PaintingViewModel by viewModels()
     private lateinit var paintingView: PaintingView
@@ -19,6 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         paintingView = findViewById(R.id.paintingView)
+        paintingView.selectedColor = viewModel.drawingColor
 
         /*
         // Android weirdness:
@@ -45,55 +44,51 @@ class MainActivity : AppCompatActivity() {
         //TODO?+ Guard against the situation where we have 0 points? Should not occur in practice...
 
         if (!idealize) {
-            viewModel.addPointsList(pointsList, drawingColor)
+            viewModel.addPointsList(pointsList, viewModel.drawingColor)
         } else {
             // Is it a circle? If so, draw the circle.
             val newCircle = ShapeRecognizer(pointsList).drawIfCircle()
             if (newCircle != null) {
-                viewModel.addCircle(newCircle, drawingColor)
+                viewModel.addCircle(newCircle, viewModel.drawingColor)
                 return
             }
 
             // Is it a line segment? If so, draw the line segment.
             val newLineSegment = ShapeRecognizer(pointsList).drawIfStraightLine()
             if (newLineSegment != null) {
-                viewModel.addLineSegment(newLineSegment, drawingColor)
+                viewModel.addLineSegment(newLineSegment, viewModel.drawingColor)
                 return
             }
 
             // If it's neither a circle nor a line, let's draw the points that the user REALLY drew:
-            viewModel.addPointsList(pointsList, drawingColor)
+            viewModel.addPointsList(pointsList, viewModel.drawingColor)
         }
     }
 
 
     fun commandIterator(): Iterator<Command> = viewModel.commandIterator()
 
-    //TODO!~ Set this in a ViewModel...
-    //var drawingColor = viewModel.selectedColor
-    private var drawingColor = Color.RED
-
     fun colorSelected(view: android.view.View) {
         if (view is RadioButton) {
             val checked = view.isChecked
             when (view.id) {
-                R.id.red -> if (checked) { drawingColor = 0xFFFF0000.toInt() /* R.color.red */ }
-                R.id.orange -> if (checked) { drawingColor = 0xFFFF8000.toInt() /* R.color.orange */ }
-                R.id.yellow -> if (checked) { drawingColor = 0xFFFFFF36.toInt() /* R.color.yellow */ }
-                R.id.green -> if (checked) { drawingColor = 0xFF00FF00.toInt() /* R.color.green */ }
-                R.id.blue -> if (checked) { drawingColor = 0xFF0000FF.toInt() /* R.color.blue */ }
-                R.id.indigo -> if (checked) { drawingColor = 0xFF4B4382.toInt() /* R.color.indigo */ }
-                R.id.violet -> if (checked) { drawingColor = 0xFF5601AF.toInt() /* R.color.violet */ }
+                R.id.red -> if (checked) { viewModel.drawingColor = 0xFFFF0000.toInt() /* R.color.red */ }
+                R.id.orange -> if (checked) { viewModel.drawingColor = 0xFFFF8000.toInt() /* R.color.orange */ }
+                R.id.yellow -> if (checked) { viewModel.drawingColor = 0xFFFFFF36.toInt() /* R.color.yellow */ }
+                R.id.green -> if (checked) { viewModel.drawingColor = 0xFF00FF00.toInt() /* R.color.green */ }
+                R.id.blue -> if (checked) { viewModel.drawingColor = 0xFF0000FF.toInt() /* R.color.blue */ }
+                R.id.indigo -> if (checked) { viewModel.drawingColor = 0xFF4B4382.toInt() /* R.color.indigo */ }
+                R.id.violet -> if (checked) { viewModel.drawingColor = 0xFF5601AF.toInt() /* R.color.violet */ }
             }
             //viewModel.selectedColor = drawingColor
             // Apparently the View should NOT get information from the ViewModel.
             // The Activity should get information from the ViewModel, then pass it to the View.
             // (Source: https://sapandiwakar.in/accessing-viewmodel-inside-views-on-android-2/)
-            Log.i(tag, "drawingColor==$drawingColor")
-            paintingView.selectedColor = drawingColor
+            Log.i(tag, "drawingColor==$viewModel.drawingColor")
+            paintingView.selectedColor = viewModel.drawingColor
             Log.i(tag, "Selected color in paintingView==${paintingView.selectedColor}")
         }
-        Log.i(tag, "Selected color = $drawingColor")
+        Log.i(tag, "Selected color = $viewModel.drawingColor")
     }
 
     fun clear(view: android.view.View) {
